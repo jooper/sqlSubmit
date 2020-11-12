@@ -31,6 +31,7 @@ import org.apache.flink.table.descriptors.SchemaValidator;
 import org.apache.flink.table.factories.DeserializationSchemaFactory;
 import org.apache.flink.table.factories.SerializationSchemaFactory;
 import org.apache.flink.table.factories.StreamTableSinkFactory;
+import org.apache.flink.table.factories.StreamTableSourceFactory;
 import org.apache.flink.table.factories.TableFactoryService;
 import org.apache.flink.table.sinks.StreamTableSink;
 import org.apache.flink.table.sources.RowtimeAttributeDescriptor;
@@ -76,7 +77,9 @@ import static com.rookie.submit.connector.kafka.UpsertKafkaValidator.*;
  * Factory for creating configured instances of {@link KafkaUpsertTableSink}.
  */
 public abstract class KafkaUpsertTableSinkFactoryBase implements
-        StreamTableSinkFactory<Row> {
+        StreamTableSinkFactory<Row>
+//        ,StreamTableSourceFactory<Row>
+{
 
     @Override
     public Map<String, String> requiredContext() {

@@ -67,7 +67,7 @@ commit to flink cluster
 # --job.prop.file demoJobPropFile.properties  special job properties
 # parameter priority : special parameter is hightest, next is job.prop.file, default properties [sqlSubmit.properties] last
 sh sqlSubmit.sh --sql demo.sql --state.backend rocksdb --job.prop.file demoJobPropFile.properties
-
+$FLINK_HOME/bin/flink run  -c com.rookie.submit.main.SqlSubmit sqlSubmit-0.1.jar --sql q2.sql --state.backend rocksdb --job.prop.file sqlSubmit.properties
 ```
 
 ## Building 
@@ -110,3 +110,12 @@ CREATE TABLE hive_table_user_log_sink (
 ![image](https://github.com/springMoon/sqlSubmit/blob/master/doc/picture/gzh.png)
 
 ## About
+
+
+
+
+## 躺坑记录
+打包时候，不要把系统包打入，建pom.xml
+添加mvn打包插件scala-maven-plugin，否则scala代码不被打入
+加入 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>配置
+否则  spi的三方包不能被打入包中

@@ -48,12 +48,12 @@ object SqlSubmit {
     TableConfUtil.conf(tabEnv, paraTool)
 
     // register catalog, only in server
-    if ("/".equals(File.separator)) {
-      //      val catalog = new HiveCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME), paraTool.get(Constant.HIVE_DEFAULT_DATABASE), paraTool.get(Constant.HIVE_CONFIG_PATH), paraTool.get(Constant.HIVE_VERSION))
-      val catalog = new HiveCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME), paraTool.get(Constant.HIVE_DEFAULT_DATABASE), paraTool.get(Constant.HIVE_CONFIG_PATH))
-      tabEnv.registerCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME), catalog)
-      tabEnv.useCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME))
-    }
+//    if ("/".equals(File.separator)) {
+//      //      val catalog = new HiveCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME), paraTool.get(Constant.HIVE_DEFAULT_DATABASE), paraTool.get(Constant.HIVE_CONFIG_PATH), paraTool.get(Constant.HIVE_VERSION))
+//      val catalog = new HiveCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME), paraTool.get(Constant.HIVE_DEFAULT_DATABASE), paraTool.get(Constant.HIVE_CONFIG_PATH))
+//      tabEnv.registerCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME), catalog)
+//      tabEnv.useCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME))
+//    }
 
     // load udf
     RegisterUdf.registerUdf(tabEnv)
@@ -62,9 +62,9 @@ object SqlSubmit {
     val statement = tabEnv.createStatementSet()
     var result: StatementSet = null
     for (sql <- sqlList) {
+      //      val sql = sqlone.toLowerCase
       try {
-        if (sql.startsWith("insert")) {
-          // ss
+        if (sql.toLowerCase.startsWith("insert")) {
           result = statement.addInsertSql(sql)
         } else {
           if (sql.contains("hive_table_")) {
@@ -87,10 +87,11 @@ object SqlSubmit {
       }
     }
     // execute insert
-    result.execute(Common.jobName)
-//    result.execute()
+    //        result.execute(Common.jobName)
+           result.execute()
+
     // not need, sql will execute when call executeSql
-    //    env.execute(Common.jobName)
+//    env.execute(Common.jobName)
   }
 
   def enableCheckpoint(env: StreamExecutionEnvironment, paraTool: ParameterTool): Unit = {
