@@ -44,40 +44,40 @@ object SqlSubmit {
       .inStreamingMode()
       .build()
     // create table enviroment
-    val tabEnv = StreamTableEnvironment.create(env, settings)
-    tabEnv.getConfig.getConfiguration.setString("job.name", "ttttt")
+    val tEnv = StreamTableEnvironment.create(env, settings)
+    tEnv.getConfig.getConfiguration.setString("job.name", "ttttt")
     // table Config
-    TableConfUtil.conf(tabEnv, paraTool)
+    TableConfUtil.conf(tEnv, paraTool)
 
     // register catalog, only in server
     //    if ("/".equals(File.separator)) {
     //      //      val catalog = new HiveCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME), paraTool.get(Constant.HIVE_DEFAULT_DATABASE), paraTool.get(Constant.HIVE_CONFIG_PATH), paraTool.get(Constant.HIVE_VERSION))
     //      val catalog = new HiveCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME), paraTool.get(Constant.HIVE_DEFAULT_DATABASE), paraTool.get(Constant.HIVE_CONFIG_PATH))
-    //      tabEnv.registerCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME), catalog)
-    //      tabEnv.useCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME))
+    //      tEnv.registerCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME), catalog)
+    //      tEnv.useCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME))
     //    }
 
     // load udf
-    RegisterUdf.registerUdf(tabEnv)
+    RegisterUdf.registerUdf(tEnv)
 
     // execute sql
-    val statement = tabEnv.createStatementSet()
+    val statement = tEnv.createStatementSet()
     var result: StatementSet = null
     for (sql <- sqlList) {
       //      val sql = sqlone.toLowerCase
       try {
         if (sql.toLowerCase.startsWith("insert")) {
           result = statement.addInsertSql(sql)
-          //          tabEnv.executeSql(sql)
+          //          tEnv.executeSql(sql)
         } else {
           if (sql.contains("hive_table_")) {
-            tabEnv.getConfig().setSqlDialect(SqlDialect.HIVE)
+            tEnv.getConfig().setSqlDialect(SqlDialect.HIVE)
           } else {
-            tabEnv.getConfig().setSqlDialect(SqlDialect.DEFAULT)
+            tEnv.getConfig().setSqlDialect(SqlDialect.DEFAULT)
           }
-          logger.info("dialect : " + tabEnv.getConfig.getSqlDialect)
-          println("dialect : " + tabEnv.getConfig.getSqlDialect)
-          tabEnv.executeSql(sql)
+          logger.info("dialect : " + tEnv.getConfig.getSqlDialect)
+          println("dialect : " + tEnv.getConfig.getSqlDialect)
+          tEnv.executeSql(sql)
         }
         logger.info("execute success : " + sql)
         println("execute success : " + sql)
