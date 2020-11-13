@@ -35,6 +35,7 @@ object SqlSubmit {
 
     // StreamExecutionEnvironment
     val env = StreamExecutionEnvironment.getExecutionEnvironment
+
     // state backend and checkpoint
     enableCheckpoint(env, paraTool)
     // EnvironmentSettings
@@ -44,16 +45,17 @@ object SqlSubmit {
       .build()
     // create table enviroment
     val tabEnv = StreamTableEnvironment.create(env, settings)
+    tabEnv.getConfig.getConfiguration.setString("job.name", "ttttt")
     // table Config
     TableConfUtil.conf(tabEnv, paraTool)
 
     // register catalog, only in server
-//    if ("/".equals(File.separator)) {
-//      //      val catalog = new HiveCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME), paraTool.get(Constant.HIVE_DEFAULT_DATABASE), paraTool.get(Constant.HIVE_CONFIG_PATH), paraTool.get(Constant.HIVE_VERSION))
-//      val catalog = new HiveCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME), paraTool.get(Constant.HIVE_DEFAULT_DATABASE), paraTool.get(Constant.HIVE_CONFIG_PATH))
-//      tabEnv.registerCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME), catalog)
-//      tabEnv.useCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME))
-//    }
+    //    if ("/".equals(File.separator)) {
+    //      //      val catalog = new HiveCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME), paraTool.get(Constant.HIVE_DEFAULT_DATABASE), paraTool.get(Constant.HIVE_CONFIG_PATH), paraTool.get(Constant.HIVE_VERSION))
+    //      val catalog = new HiveCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME), paraTool.get(Constant.HIVE_DEFAULT_DATABASE), paraTool.get(Constant.HIVE_CONFIG_PATH))
+    //      tabEnv.registerCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME), catalog)
+    //      tabEnv.useCatalog(paraTool.get(Constant.HIVE_CATALOG_NAME))
+    //    }
 
     // load udf
     RegisterUdf.registerUdf(tabEnv)
@@ -66,6 +68,7 @@ object SqlSubmit {
       try {
         if (sql.toLowerCase.startsWith("insert")) {
           result = statement.addInsertSql(sql)
+          //          tabEnv.executeSql(sql)
         } else {
           if (sql.contains("hive_table_")) {
             tabEnv.getConfig().setSqlDialect(SqlDialect.HIVE)
@@ -88,10 +91,14 @@ object SqlSubmit {
     }
     // execute insert
     //        result.execute(Common.jobName)
-           result.execute()
+    result.execute()
+
+
 
     // not need, sql will execute when call executeSql
-//    env.execute(Common.jobName)
+    //        env.execute(Common.jobName)
+
+    //    env.execute("tttt")
   }
 
   def enableCheckpoint(env: StreamExecutionEnvironment, paraTool: ParameterTool): Unit = {
